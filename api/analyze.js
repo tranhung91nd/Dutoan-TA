@@ -82,7 +82,7 @@ async function runLegal(project, supabase, model) {
   const system = P.systemPrompt(project.field_code);
   const user = P.legalPrompt(project.proposal_text || '(chưa có thuyết minh)', docs || []);
 
-  return ai.call({ system, user, model });
+  return ai.call({ system, user, model, maxTokens: 4000 });
 }
 
 async function runBudget(project, supabase, model) {
@@ -99,7 +99,7 @@ async function runBudget(project, supabase, model) {
     project.duration_months
   );
 
-  return ai.call({ system, user, model, maxTokens: 12000 });
+  return ai.call({ system, user, model, maxTokens: 6000 });
 }
 
 async function runForm05(project, supabase, model) {
@@ -126,7 +126,7 @@ async function runForm05(project, supabase, model) {
     }
   );
 
-  return ai.call({ system, user, model, maxTokens: 10000 });
+  return ai.call({ system, user, model, maxTokens: 5000 });
 }
 
 async function runFreestyle(project, supabase, model) {
@@ -141,5 +141,5 @@ async function runFreestyle(project, supabase, model) {
   const system = P.systemPrompt(project.field_code);
   const user = P.freestylePrompt(project.proposal_text || '', legal, budget);
 
-  return ai.call({ system, user, model, maxTokens: 6000 });
+  return ai.call({ system, user, model, maxTokens: 3000 });
 }
