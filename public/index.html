@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Dự Toán AI — Phân tích đề tài NCKH</title>
+<meta name="theme-color" content="#2563EB">
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@14/marked.min.js"></script>
+</head>
+<body>
+
+<div class="mobile-header">
+  <button class="hamburger" onclick="App.toggleSidebar()"><span></span><span></span><span></span></button>
+  <span style="font-weight:600;font-size:15px;">Dự Toán AI</span>
+</div>
+<div class="overlay" id="overlay" onclick="App.toggleSidebar()"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <h1>Dự Toán AI <span class="live"></span></h1>
+      <span>Phân tích đề tài NCKH</span>
+    </div>
+    <div class="nav-item active" data-page="overview" onclick="App.go('overview')">
+      <div class="nav-dot" style="background:var(--purple);"></div>Tổng quan
+    </div>
+    <div class="nav-item" data-page="projects" onclick="App.go('projects')">
+      <div class="nav-dot" style="background:var(--blue);"></div>Đề tài
+    </div>
+    <div class="nav-item" data-page="legal" onclick="App.go('legal')">
+      <div class="nav-dot" style="background:var(--teal);"></div>Thư viện pháp lý
+    </div>
+    <div class="nav-item" data-page="fields" onclick="App.go('fields')">
+      <div class="nav-dot" style="background:var(--coral);"></div>Lĩnh vực
+    </div>
+    <div class="nav-item" data-page="norms" onclick="App.go('norms')">
+      <div class="nav-dot" style="background:var(--pink);"></div>Định mức chi
+    </div>
+    <div class="nav-sep"></div>
+    <div class="nav-label">Hệ thống</div>
+    <div class="nav-item" data-page="logs" onclick="App.go('logs')">
+      <div class="nav-dot" style="background:var(--green);"></div>Logs AI
+    </div>
+    <div class="nav-item" data-page="admin" onclick="App.go('admin')">
+      <div class="nav-dot" style="background:var(--amber);"></div>Cài đặt
+    </div>
+  </aside>
+
+  <main class="main" id="page">
+    <div class="loading">Đang khởi động</div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+<div id="modal-root"></div>
+
+<script src="js/api.js"></script>
+<script src="js/pages/overview.js"></script>
+<script src="js/pages/projects.js"></script>
+<script src="js/pages/project-detail.js"></script>
+<script src="js/pages/legal.js"></script>
+<script src="js/pages/fields.js"></script>
+<script src="js/pages/norms.js"></script>
+<script src="js/pages/logs.js"></script>
+<script src="js/pages/admin.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

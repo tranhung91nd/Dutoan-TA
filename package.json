@@ -1,0 +1,26 @@
+{
+  "name": "du-toan-ai",
+  "version": "0.1.0",
+  "description": "Công cụ AI phân tích đề tài NCKH - pháp lý, dự toán, phiếu đánh giá",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "mammoth": "^1.8.0",
+    "pdf-parse": "^1.1.1",
+    "xlsx": "^0.18.5",
+    "docx": "^9.0.0",
+    "formidable": "^3.5.2",
+    "busboy": "^1.6.0"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}
