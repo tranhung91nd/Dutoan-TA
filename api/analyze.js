@@ -1,6 +1,6 @@
 // POST /api/analyze { projectId, type }
 // Chạy phân tích AI cho 1 đề tài
-const claude = require('../lib/claude');
+const ai = require('../lib/ai');
 const { sb, logAI } = require('../lib/supabase');
 const P = require('../lib/prompts');
 
@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
 
   const supabase = sb();
   if (!supabase) return res.status(500).json({ error: 'Chưa cấu hình Supabase' });
-  if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'Chưa cấu hình ANTHROPIC_API_KEY' });
+  if (!process.env.OPENAI_API_KEY) return res.status(500).json({ error: 'Chưa cấu hình OPENAI_API_KEY' });
 
   try {
     // Lấy project
@@ -79,7 +79,7 @@ async function runLegal(project, supabase) {
   const system = P.systemPrompt(project.field_code);
   const user = P.legalPrompt(project.proposal_text || '(chưa có thuyết minh)', docs || []);
 
-  return claude.call({ system, user, model: 'claude-sonnet-4-6' });
+  return ai.call({ system, user, model: 'gpt-4o' });
 }
 
 async function runBudget(project, supabase) {
@@ -96,7 +96,7 @@ async function runBudget(project, supabase) {
     project.duration_months
   );
 
-  return claude.call({ system, user, model: 'claude-sonnet-4-6', maxTokens: 12000 });
+  return ai.call({ system, user, model: 'gpt-4o', maxTokens: 12000 });
 }
 
 async function runForm05(project, supabase) {
@@ -123,7 +123,7 @@ async function runForm05(project, supabase) {
     }
   );
 
-  return claude.call({ system, user, model: 'claude-sonnet-4-6', maxTokens: 10000 });
+  return ai.call({ system, user, model: 'gpt-4o', maxTokens: 10000 });
 }
 
 async function runFreestyle(project, supabase) {
@@ -138,5 +138,5 @@ async function runFreestyle(project, supabase) {
   const system = P.systemPrompt(project.field_code);
   const user = P.freestylePrompt(project.proposal_text || '', legal, budget);
 
-  return claude.call({ system, user, model: 'claude-sonnet-4-6', maxTokens: 6000 });
+  return ai.call({ system, user, model: 'gpt-4o', maxTokens: 6000 });
 }

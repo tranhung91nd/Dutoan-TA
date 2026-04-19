@@ -16,7 +16,7 @@ Công cụ web app hỗ trợ phân tích đề tài nghiên cứu khoa học Vi
 |---|---|
 | Frontend | HTML/CSS/Vanilla JS (style HC Agency) |
 | Backend | Vercel Serverless Functions (Node.js 18) |
-| AI | Anthropic Claude (Sonnet 4.6) với prompt caching |
+| AI | OpenAI (GPT-4o) với JSON mode + prompt caching tự động |
 | Database | Supabase PostgreSQL (pgcrypto) |
 | File Storage | Supabase Storage |
 | File Parsing | mammoth (DOCX), pdf-parse (PDF), xlsx (Excel) |
@@ -28,7 +28,7 @@ Công cụ web app hỗ trợ phân tích đề tài nghiên cứu khoa học Vi
 
 ### Bước 1: Chuẩn bị tài khoản
 
-1. **Anthropic API key**: https://console.anthropic.com/settings/keys
+1. **OpenAI API key**: https://platform.openai.com/api-keys
 2. **Supabase project mới**: https://supabase.com/dashboard
    - Tạo project → copy `Project URL`, `anon public key`, `service_role key`
 3. **Vercel account**: https://vercel.com (đăng nhập bằng GitHub)
@@ -73,7 +73,7 @@ Vercel Dashboard → Project → Settings → **Environment Variables** → thê
 
 | Biến | Giá trị |
 |---|---|
-| `ANTHROPIC_API_KEY` | `sk-ant-api03-...` |
+| `OPENAI_API_KEY` | `sk-...` |
 | `SUPABASE_URL` | `https://xxxx.supabase.co` |
 | `SUPABASE_ANON_KEY` | `eyJhbGc...` (anon public) |
 | `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbGc...` (service_role, KHÔNG expose client) |
@@ -111,7 +111,7 @@ du-toan-ai/
 │   ├── analyze.js          # POST chạy AI phân tích
 │   └── generate-form.js    # POST xuất .docx
 ├── lib/                    # Shared modules
-│   ├── claude.js           # Claude API wrapper + pricing
+│   ├── ai.js               # OpenAI API wrapper + pricing
 │   ├── parsers.js          # DOCX/PDF/XLSX parsers
 │   ├── prompts.js          # Prompts tiếng Việt
 │   └── supabase.js         # Supabase server client

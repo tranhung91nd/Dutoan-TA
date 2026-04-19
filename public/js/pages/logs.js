@@ -14,7 +14,7 @@ Pages.Logs = async function () {
 
   return `
     <div class="page-title">Logs AI</div>
-    <div class="page-sub">Theo dõi các lần gọi Claude API: chi phí, token, thời gian.</div>
+    <div class="page-sub">Theo dõi các lần gọi OpenAI API: chi phí, token, thời gian.</div>
 
     <div class="kpi-grid kpi-3">
       <div class="kpi">

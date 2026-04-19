@@ -2,7 +2,7 @@ window.Pages = window.Pages || {};
 
 Pages.Admin = async function () {
   const cfg = await API.init();
-  const hasKey = cfg && cfg.hasAnthropicKey;
+  const hasKey = cfg && cfg.hasOpenAIKey;
   const hasDB = API.hasDB();
 
   return `
@@ -25,12 +25,12 @@ Pages.Admin = async function () {
       <div class="card">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <div style="width:10px;height:10px;border-radius:50%;background:var(--${hasKey ? 'green' : 'red'});"></div>
-          <div style="font-weight:700;">Anthropic Claude</div>
+          <div style="font-weight:700;">OpenAI</div>
         </div>
         <div style="font-size:12px;color:var(--tx2);">
           ${hasKey
             ? `API key đã cấu hình (chỉ lưu ở server, không expose ra client).`
-            : 'Chưa có API key. Set <span class="mono">ANTHROPIC_API_KEY</span> trong Vercel Environment.'}
+            : 'Chưa có API key. Set <span class="mono">OPENAI_API_KEY</span> trong Vercel Environment.'}
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@ Pages.Admin = async function () {
           <li>Vào <strong>Vercel Dashboard</strong> → chọn project → <strong>Settings</strong> → <strong>Environment Variables</strong></li>
           <li>Thêm các biến:
             <ul>
-              <li><code>ANTHROPIC_API_KEY</code> — từ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></li>
+              <li><code>OPENAI_API_KEY</code> — từ <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></li>
               <li><code>SUPABASE_URL</code> — URL project Supabase</li>
               <li><code>SUPABASE_ANON_KEY</code> — anon public key</li>
               <li><code>SUPABASE_SERVICE_ROLE_KEY</code> — service role (dùng ở serverless function)</li>
@@ -53,28 +53,28 @@ Pages.Admin = async function () {
       </div>
     </div>
 
-    <div class="section-title" style="font-size:14px;margin-top:24px;">Giá Claude API (tham khảo 2025)</div>
+    <div class="section-title" style="font-size:14px;margin-top:24px;">Giá OpenAI API (tham khảo 2025)</div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Model</th><th>Dùng cho</th><th style="text-align:right;">Input / 1M tokens</th><th style="text-align:right;">Output / 1M tokens</th><th style="text-align:right;">VND/lần phân tích*</th></tr></thead>
         <tbody>
           <tr>
-            <td class="mono">claude-sonnet-4-6</td>
+            <td class="mono">gpt-4o</td>
             <td>Phân tích pháp lý, dự toán (chính)</td>
-            <td class="mono" style="text-align:right;">$3</td>
-            <td class="mono" style="text-align:right;">$15</td>
-            <td class="mono" style="text-align:right;font-weight:600;">~10-20K</td>
+            <td class="mono" style="text-align:right;">$2.5</td>
+            <td class="mono" style="text-align:right;">$10</td>
+            <td class="mono" style="text-align:right;font-weight:600;">~8-15K</td>
           </tr>
           <tr>
-            <td class="mono">claude-haiku-4-5</td>
+            <td class="mono">gpt-4o-mini</td>
             <td>Phân loại lĩnh vực, tóm tắt</td>
-            <td class="mono" style="text-align:right;">$1</td>
-            <td class="mono" style="text-align:right;">$5</td>
-            <td class="mono" style="text-align:right;font-weight:600;">~2-5K</td>
+            <td class="mono" style="text-align:right;">$0.15</td>
+            <td class="mono" style="text-align:right;">$0.60</td>
+            <td class="mono" style="text-align:right;font-weight:600;">~0.5-2K</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div style="font-size:11px;color:var(--tx3);margin-top:8px;">* Ước tính cho 1 đề tài ~30 trang thuyết minh + 1 dự toán. Chưa tính prompt caching (có thể giảm 90% chi phí khi dùng lại văn bản pháp lý).</div>
+    <div style="font-size:11px;color:var(--tx3);margin-top:8px;">* Ước tính cho 1 đề tài ~30 trang thuyết minh + 1 dự toán. OpenAI tự động cache prompt ≥1024 tokens (giảm ~50% chi phí input khi gọi lại trong 5-10 phút).</div>
   `;
 };

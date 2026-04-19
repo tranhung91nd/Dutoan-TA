@@ -11,7 +11,7 @@
     "node": ">=18.x"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
+    "openai": "^4.73.0",
     "@supabase/supabase-js": "^2.45.4",
     "mammoth": "^1.8.0",
     "pdf-parse": "^1.1.1",
