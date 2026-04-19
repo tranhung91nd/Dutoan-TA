@@ -59,11 +59,18 @@ Pages.Admin = async function () {
         <thead><tr><th>Model</th><th>Dùng cho</th><th style="text-align:right;">Input / 1M tokens</th><th style="text-align:right;">Output / 1M tokens</th><th style="text-align:right;">VND/lần phân tích*</th></tr></thead>
         <tbody>
           <tr>
-            <td class="mono">gpt-4o</td>
-            <td>Phân tích pháp lý, dự toán (chính)</td>
-            <td class="mono" style="text-align:right;">$2.5</td>
+            <td class="mono">gpt-5-mini</td>
+            <td>Phân tích pháp lý, dự toán (mặc định)</td>
+            <td class="mono" style="text-align:right;">$0.25</td>
+            <td class="mono" style="text-align:right;">$2</td>
+            <td class="mono" style="text-align:right;font-weight:600;">~1-3K</td>
+          </tr>
+          <tr>
+            <td class="mono">gpt-5</td>
+            <td>Upgrade khi cần độ chính xác cao</td>
+            <td class="mono" style="text-align:right;">$1.25</td>
             <td class="mono" style="text-align:right;">$10</td>
-            <td class="mono" style="text-align:right;font-weight:600;">~8-15K</td>
+            <td class="mono" style="text-align:right;font-weight:600;">~5-10K</td>
           </tr>
           <tr>
             <td class="mono">gpt-4o-mini</td>
