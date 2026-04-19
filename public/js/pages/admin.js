@@ -5,9 +5,33 @@ Pages.Admin = async function () {
   const hasKey = cfg && cfg.hasOpenAIKey;
   const hasDB = API.hasDB();
 
+  const MODELS = [
+    { value: 'gpt-5',        label: 'gpt-5 — $1.25/$10 · cao cấp' },
+    { value: 'gpt-5-mini',   label: 'gpt-5-mini — $0.25/$2 · mặc định' },
+    { value: 'gpt-5-nano',   label: 'gpt-5-nano — $0.05/$0.40 · siêu rẻ' },
+    { value: 'gpt-5.4',      label: 'gpt-5.4 — $2.5/$15 · flagship mới' },
+    { value: 'gpt-5.4-mini', label: 'gpt-5.4-mini — $0.75/$4.50 · ctx 400K' },
+    { value: 'gpt-4o',       label: 'gpt-4o — $2.5/$10' },
+    { value: 'gpt-4o-mini',  label: 'gpt-4o-mini — $0.15/$0.60' },
+    { value: 'gpt-4.1',      label: 'gpt-4.1 — $2/$8' },
+    { value: 'gpt-4.1-mini', label: 'gpt-4.1-mini — $0.40/$1.60' }
+  ];
+
+  const MODULES = [
+    { key: 'legal',     name: 'Căn cứ pháp lý',   desc: 'Trích điều/khoản chính xác, cần chất lượng cao' },
+    { key: 'budget',    name: 'Đánh giá dự toán', desc: 'Phân tích số liệu + định mức, context lớn' },
+    { key: 'form_05',   name: 'Phiếu MẪU 05',     desc: 'Văn phong hành chính chuẩn' },
+    { key: 'freestyle', name: 'Phiếu trao đổi họp', desc: 'Câu hỏi sắc bén, có thể dùng model rẻ' },
+    { key: 'chat',      name: 'Trợ lý AI (chat)', desc: 'Hội thoại ngắn, ưu tiên tốc độ & giá' }
+  ];
+
+  const selectOptions = (current) => MODELS.map(m =>
+    `<option value="${m.value}" ${m.value === current ? 'selected' : ''}>${U.esc(m.label)}</option>`
+  ).join('');
+
   return `
     <div class="page-title">Cài đặt</div>
-    <div class="page-sub">Trạng thái hệ thống & kết nối.</div>
+    <div class="page-sub">Trạng thái hệ thống, kết nối, và chọn model AI cho từng module.</div>
 
     <div class="section-title" style="font-size:14px;">Kết nối</div>
     <div class="kpi-grid kpi-2">
@@ -32,6 +56,27 @@ Pages.Admin = async function () {
             ? `API key đã cấu hình (chỉ lưu ở server, không expose ra client).`
             : 'Chưa có API key. Set <span class="mono">OPENAI_API_KEY</span> trong Vercel Environment.'}
         </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size:14px;margin-top:24px;">Chọn model AI cho từng module</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:12px;">
+        Thay đổi áp dụng ngay cho các lần chạy sau. Lưu trong trình duyệt của bạn.
+      </div>
+      <div class="model-grid" id="model-grid">
+        ${MODULES.map(mod => `
+          <div class="model-row">
+            <div class="model-row-label">${U.esc(mod.name)}</div>
+            <div class="model-row-desc">${U.esc(mod.desc)}</div>
+            <select data-module="${mod.key}" onchange="API.Settings.setModel(this.dataset.module, this.value); U.toast('Đã lưu: ' + this.value);">
+              ${selectOptions(API.Settings.getModel(mod.key))}
+            </select>
+          </div>
+        `).join('')}
+      </div>
+      <div style="margin-top:12px;text-align:right;">
+        <button class="btn btn-ghost" onclick="if(confirm('Reset tất cả về gpt-5-mini?')){API.Settings.resetAll();App.go('admin');U.toast('Đã reset');}">Reset mặc định</button>
       </div>
     </div>
 

@@ -107,14 +107,47 @@ window.API = (function () {
   }
 
   async function analyze(projectId, type) {
+    const model = Settings.getModel(type);
     const r = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ projectId, type })
+      body: JSON.stringify({ projectId, type, model })
     });
     if (!r.ok) throw new Error((await r.json()).error || 'Phân tích thất bại');
     return r.json();
   }
+
+  async function chat(messages, projectId = null) {
+    const model = Settings.getModel('chat');
+    const r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, model, projectId })
+    });
+    if (!r.ok) throw new Error((await r.json()).error || 'Trợ lý lỗi');
+    return r.json();
+  }
+
+  // ---- Settings (localStorage) ----
+  const Settings = {
+    DEFAULTS: {
+      legal:     'gpt-5-mini',
+      budget:    'gpt-5-mini',
+      form_05:   'gpt-5-mini',
+      freestyle: 'gpt-5-mini',
+      chat:      'gpt-5-mini'
+    },
+    getModel(type) {
+      try { return localStorage.getItem(`model.${type}`) || this.DEFAULTS[type] || 'gpt-5-mini'; }
+      catch { return this.DEFAULTS[type] || 'gpt-5-mini'; }
+    },
+    setModel(type, model) {
+      try { localStorage.setItem(`model.${type}`, model); } catch {}
+    },
+    resetAll() {
+      try { Object.keys(this.DEFAULTS).forEach(t => localStorage.removeItem(`model.${t}`)); } catch {}
+    }
+  };
 
   async function generateForm(projectId, formType) {
     const r = await fetch('/api/generate-form', {
@@ -168,7 +201,7 @@ window.API = (function () {
     init, hasDB, getClient,
     fields, projects, projectById, createProject, updateProject, deleteProject,
     legalDocs, createLegalDoc, analysesByProject, norms,
-    upload, analyze, generateForm
+    upload, analyze, generateForm, chat, Settings
   };
 })();
 

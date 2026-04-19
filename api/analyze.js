@@ -6,11 +6,14 @@ const P = require('../lib/prompts');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  const { projectId, type } = req.body || {};
+  const { projectId, type, model } = req.body || {};
   if (!projectId || !type) return res.status(400).json({ error: 'Thiếu projectId hoặc type' });
 
   const VALID = ['legal', 'budget', 'form_05', 'freestyle'];
   if (!VALID.includes(type)) return res.status(400).json({ error: 'type không hợp lệ' });
+
+  const ALLOWED_MODELS = ['gpt-5', 'gpt-5-mini', 'gpt-5-nano', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini'];
+  const pickedModel = ALLOWED_MODELS.includes(model) ? model : 'gpt-5-mini';
 
   const supabase = sb();
   if (!supabase) return res.status(500).json({ error: 'Chưa cấu hình Supabase' });
@@ -27,10 +30,10 @@ module.exports = async (req, res) => {
 
     let result;
     switch (type) {
-      case 'legal':     result = await runLegal(project, supabase); break;
-      case 'budget':    result = await runBudget(project, supabase); break;
-      case 'form_05':   result = await runForm05(project, supabase); break;
-      case 'freestyle': result = await runFreestyle(project, supabase); break;
+      case 'legal':     result = await runLegal(project, supabase, pickedModel); break;
+      case 'budget':    result = await runBudget(project, supabase, pickedModel); break;
+      case 'form_05':   result = await runForm05(project, supabase, pickedModel); break;
+      case 'freestyle': result = await runFreestyle(project, supabase, pickedModel); break;
     }
 
     // Lưu kết quả
@@ -69,7 +72,7 @@ module.exports = async (req, res) => {
   }
 };
 
-async function runLegal(project, supabase) {
+async function runLegal(project, supabase, model) {
   // Lấy văn bản pháp lý phù hợp với lĩnh vực
   const { data: docs } = await supabase.from('legal_documents')
     .select('*')
@@ -79,10 +82,10 @@ async function runLegal(project, supabase) {
   const system = P.systemPrompt(project.field_code);
   const user = P.legalPrompt(project.proposal_text || '(chưa có thuyết minh)', docs || []);
 
-  return ai.call({ system, user, model: 'gpt-5-mini' });
+  return ai.call({ system, user, model });
 }
 
-async function runBudget(project, supabase) {
+async function runBudget(project, supabase, model) {
   const { data: norms } = await supabase.from('budget_norms')
     .select('*')
     .or(`applicable_fields.cs.{${project.field_code}},applicable_fields.eq.{}`);
@@ -96,10 +99,10 @@ async function runBudget(project, supabase) {
     project.duration_months
   );
 
-  return ai.call({ system, user, model: 'gpt-5-mini', maxTokens: 12000 });
+  return ai.call({ system, user, model, maxTokens: 12000 });
 }
 
-async function runForm05(project, supabase) {
+async function runForm05(project, supabase, model) {
   // Lấy 2 phân tích trước đó (legal + budget) để làm input
   const { data: analyses } = await supabase.from('analyses')
     .select('*').eq('project_id', project.id)
@@ -123,10 +126,10 @@ async function runForm05(project, supabase) {
     }
   );
 
-  return ai.call({ system, user, model: 'gpt-5-mini', maxTokens: 10000 });
+  return ai.call({ system, user, model, maxTokens: 10000 });
 }
 
-async function runFreestyle(project, supabase) {
+async function runFreestyle(project, supabase, model) {
   const { data: analyses } = await supabase.from('analyses')
     .select('*').eq('project_id', project.id)
     .in('analysis_type', ['legal', 'budget'])
@@ -138,5 +141,5 @@ async function runFreestyle(project, supabase) {
   const system = P.systemPrompt(project.field_code);
   const user = P.freestylePrompt(project.proposal_text || '', legal, budget);
 
-  return ai.call({ system, user, model: 'gpt-5-mini', maxTokens: 6000 });
+  return ai.call({ system, user, model, maxTokens: 6000 });
 }
