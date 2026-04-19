@@ -100,9 +100,24 @@ window.API = (function () {
   }
 
   // ---- Backend calls ----
+  async function extractError(r, fallback) {
+    if (r.status === 504) return 'Hết thời gian xử lý (504). AI mất quá lâu — thử lại hoặc dùng model nhẹ hơn (gpt-5-nano/gpt-4o-mini).';
+    const ct = r.headers.get('content-type') || '';
+    try {
+      if (ct.includes('application/json')) {
+        const j = await r.json();
+        return j.error || j.message || fallback;
+      }
+      const t = await r.text();
+      return t.length > 300 ? fallback + ` (HTTP ${r.status})` : t.trim() || fallback;
+    } catch {
+      return fallback + ` (HTTP ${r.status})`;
+    }
+  }
+
   async function upload(formData) {
     const r = await fetch('/api/upload', { method: 'POST', body: formData });
-    if (!r.ok) throw new Error((await r.json()).error || 'Upload thất bại');
+    if (!r.ok) throw new Error(await extractError(r, 'Upload thất bại'));
     return r.json();
   }
 
@@ -113,7 +128,7 @@ window.API = (function () {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectId, type, model })
     });
-    if (!r.ok) throw new Error((await r.json()).error || 'Phân tích thất bại');
+    if (!r.ok) throw new Error(await extractError(r, 'Phân tích thất bại'));
     return r.json();
   }
 
@@ -124,7 +139,7 @@ window.API = (function () {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages, model, projectId })
     });
-    if (!r.ok) throw new Error((await r.json()).error || 'Trợ lý lỗi');
+    if (!r.ok) throw new Error(await extractError(r, 'Trợ lý lỗi'));
     return r.json();
   }
 
@@ -155,7 +170,7 @@ window.API = (function () {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectId, formType })
     });
-    if (!r.ok) throw new Error((await r.json()).error || 'Xuất phiếu thất bại');
+    if (!r.ok) throw new Error(await extractError(r, 'Xuất phiếu thất bại'));
     return r.blob();
   }
 
